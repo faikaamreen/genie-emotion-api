@@ -6,13 +6,16 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Emotion Detection API is running!"
+    return jsonify({
+        "message": "🐾 GENIE Emotion Detection API is Live and Ready ✨",
+        "usage": "Use POST /detect with a JSON body containing 'image' (base64)"
+    })
 
 @app.route('/detect', methods=['POST'])
 def detect_emotion():
     try:
         data = request.get_json()
-        if 'image' not in data:
+        if not data or 'image' not in data:
             return jsonify({"error": "No image data provided"}), 400
 
         img_data = data['image']
@@ -22,6 +25,7 @@ def detect_emotion():
 
         result = DeepFace.analyze(img, actions=['emotion'])
         emotion = result[0]['dominant_emotion']
+
         return jsonify({"emotion": emotion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
