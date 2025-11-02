@@ -1,0 +1,10 @@
+Flask==3.1.2
+deepface==0.0.95
+opencv-python==4.11.0.86
+numpy==1.26.4
+pillow==12.0.0
+gunicorn==23.0.0
+requests==2.32.5
+flask-cors==3.0.10
+# Prefer CPU-only TF to reduce build problems on hosts:
+tensorflow-cpu==2.15.0
