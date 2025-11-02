@@ -1,31 +1,30 @@
 from flask import Flask, request, jsonify
 from deepface import DeepFace
-from flask_cors import CORS
+import numpy as np, cv2, base64
 
 app = Flask(__name__)
-CORS(app)
 
-# ✅ Home route to show API is live
 @app.route('/')
 def home():
-    return jsonify({
-        "message": "🎉 GENIE Emotion Detection API is Live and Ready 🚀",
-        "usage": "Use POST /detect with an image to get emotion results."
-    })
+    return "Emotion Detection API is running!"
 
-# ✅ Emotion detection route
 @app.route('/detect', methods=['POST'])
 def detect_emotion():
     try:
-        if 'file' not in request.files:
-            return jsonify({"error": "No image file uploaded"}), 400
+        data = request.get_json()
+        if 'image' not in data:
+            return jsonify({"error": "No image data provided"}), 400
 
-        file = request.files['file']
-        result = DeepFace.analyze(file.read(), actions=['emotion'])
-        return jsonify(result)
+        img_data = data['image']
+        img_bytes = base64.b64decode(img_data)
+        np_arr = np.frombuffer(img_bytes, np.uint8)
+        img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+
+        result = DeepFace.analyze(img, actions=['emotion'])
+        emotion = result[0]['dominant_emotion']
+        return jsonify({"emotion": emotion})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True)
