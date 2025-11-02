@@ -7,4 +7,4 @@ gunicorn==23.0.0
 requests==2.32.5
 flask-cors==3.0.10
 # Prefer CPU-only TF to reduce build problems on hosts:
-tensorflow-cpu==2.15.0
+tensorflow-cpu==2.20.0
