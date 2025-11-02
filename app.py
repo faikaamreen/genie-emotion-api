@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 from deepface import DeepFace
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-# ✅ Home route - this fixes the "Not Found" error
+# ✅ Home route (so your Render URL won't show "Not Found")
 @app.route('/')
 def home():
     return "🎉 GENIE Emotion Detection API is Live and Ready 🚀"
@@ -14,23 +14,23 @@ def home():
 @app.route('/detect', methods=['POST'])
 def detect_emotion():
     try:
-        # check if image is sent in request
-        if 'image' not in request.files:
-            return jsonify({'error': 'No image file found in request'}), 400
+        # Get image from request
+        if 'file' not in request.files:
+            return jsonify({"error": "No image file provided"}), 400
 
-        image = request.files['image']
+        file = request.files['file']
+        file_path = "temp.jpg"
+        file.save(file_path)
 
-        # use DeepFace to analyze the emotion
-        result = DeepFace.analyze(image.read(), actions=['emotion'], enforce_detection=False)
-
-        # extract the emotion
+        # Analyze the emotion using DeepFace
+        result = DeepFace.analyze(img_path=file_path, actions=['emotion'])
         emotion = result[0]['dominant_emotion']
 
-        return jsonify({'emotion': emotion})
+        return jsonify({"emotion": emotion}), 200
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
-
+# ✅ Run the app
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=10000)
+    app.run(host='0.0.0.0', port=5000)
