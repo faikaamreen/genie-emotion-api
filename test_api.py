@@ -1,12 +1,19 @@
 import base64
 import requests
 
-# 1️⃣ Convert test image to base64
-with open("test_images/happy.jpg", "rb") as f:
-    img_b64 = base64.b64encode(f.read()).decode('utf-8')
+# Deployed Render URL
+API_URL = "https://genie-emotion-api-1.onrender.com/detect"
 
-# 2️⃣ Send POST request to Flask server
-response = requests.post("http://127.0.0.1:5000/detect", json={"image": img_b64})
+# Path to local image
+IMAGE_PATH = "test_images/happy.jpg"
 
-# 3️⃣ Print API response
-print(response.json())
+# Encode image as base64
+with open(IMAGE_PATH, "rb") as f:
+    img_b64 = base64.b64encode(f.read()).decode("utf-8")
+
+# Send POST request
+response = requests.post(API_URL, json={"image": img_b64})
+
+# Show results
+print("Status Code:", response.status_code)
+print("Response:", response.text)
